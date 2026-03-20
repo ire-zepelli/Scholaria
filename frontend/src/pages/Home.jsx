@@ -1,9 +1,16 @@
 import React from "react";
+import Hero from "./Hero";
+import About from "./About";
+import Scholarships from "./Scholarships";
+import Footer from "./Footer";
 
 export default function Home() {
   return (
     <>
-      <h1>Welcome to Scholaria!</h1>
+        <Hero />
+        <About />
+        <Scholarships />
+        <Footer />
     </>
   );
 }
