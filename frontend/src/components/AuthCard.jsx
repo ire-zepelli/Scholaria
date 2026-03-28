@@ -1,24 +1,62 @@
 import React, { useState } from "react";
 import loginImg from "/login-img.png";
 import registerImg from "/register-img.png";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthCard({ onClose }) {
+  const navigate = useNavigate();
   const [view, setView] = useState("login");
 
-  const handleViewLogin = () => {
-    setView("login");
-  };
+  // Login
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
 
-  const handleViewRegister = () => {
-    setView("register");
-  };
+  // Register
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleViewStudentInfo = () => {
+  // Academic Info
+  const [educationLevel, setEducationLevel] = useState("");
+  const [program, setProgram] = useState("");
+  const [yearLevel, setYearLevel] = useState("");
+  const [school, setSchool] = useState("");
+  const [gpa, setGpa] = useState("");
+  const [familyIncome, setFamilyIncome] = useState("");
+  const [city, setCity] = useState("");
+  const [nationality, setNationality] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const handleViewLogin = () => setView("login");
+  const handleViewRegister = () => setView("register");
+  const handleViewAcademicInfo = () => {
+    if (registerPassword !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
     setView("academicInfo");
   };
 
   const handleSubmit = (e) => {
-    console.log("submitted");
+    e.preventDefault();
+    console.log("submitted", {
+      firstName,
+      lastName,
+      registerEmail,
+      registerPassword,
+      educationLevel,
+      program,
+      yearLevel,
+      school,
+      gpa,
+      familyIncome,
+      city,
+      nationality,
+      phone,
+    });
+    navigate("/scholarships");
   };
 
   const handleClose = () => {
@@ -37,7 +75,6 @@ export default function AuthCard({ onClose }) {
             className="w-[65rem] h-[35rem] rounded-xl bg-white flex flex-row overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Left image panel */}
             <div className="w-1/2 min-h-100 bg-red-200 relative">
               <img
                 src={registerImg}
@@ -46,7 +83,6 @@ export default function AuthCard({ onClose }) {
               />
             </div>
 
-            {/* Right form panel */}
             <div className="w-1/2 min-h-100 bg-white flex justify-start flex-col items-center p-10">
               <h1 className="text-[#01395E] font-bold text-3xl">
                 Create your profile
@@ -61,14 +97,18 @@ export default function AuthCard({ onClose }) {
 
               <hr className="w-full text-black my-4" />
 
-              <form className="space-y-4 w-full">
-                {/* Row 1 */}
+              <form className="space-y-4 w-full" onSubmit={handleSubmit}>
                 <div className="flex gap-3">
                   <div className="flex-1">
                     <label className="block text-xs font-semibold text-gray-700 mb-1">
                       Education Level <span className="text-red-500">*</span>
                     </label>
-                    <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition">
+                    <select
+                      value={educationLevel}
+                      onChange={(e) => setEducationLevel(e.target.value)}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
+                      required
+                    >
                       <option value="">Select</option>
                       <option>Undergraduate</option>
                       <option>Graduate</option>
@@ -82,6 +122,8 @@ export default function AuthCard({ onClose }) {
                     </label>
                     <input
                       type="text"
+                      value={program}
+                      onChange={(e) => setProgram(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
@@ -93,13 +135,14 @@ export default function AuthCard({ onClose }) {
                     </label>
                     <input
                       type="text"
+                      value={yearLevel}
+                      onChange={(e) => setYearLevel(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
                   </div>
                 </div>
 
-                {/* Row 2 */}
                 <div className="flex gap-3">
                   <div className="flex-1">
                     <label className="block text-xs font-semibold text-gray-700 mb-1">
@@ -107,6 +150,8 @@ export default function AuthCard({ onClose }) {
                     </label>
                     <input
                       type="text"
+                      value={school}
+                      onChange={(e) => setSchool(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
@@ -118,6 +163,8 @@ export default function AuthCard({ onClose }) {
                     </label>
                     <input
                       type="text"
+                      value={gpa}
+                      onChange={(e) => setGpa(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
@@ -129,19 +176,25 @@ export default function AuthCard({ onClose }) {
                     </label>
                     <input
                       type="text"
+                      value={familyIncome}
+                      onChange={(e) => setFamilyIncome(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
                   </div>
                 </div>
 
-                {/* Row 3 */}
                 <div className="flex gap-3">
                   <div className="flex-1">
                     <label className="block text-xs font-semibold text-gray-700 mb-1">
                       City <span className="text-red-500">*</span>
                     </label>
-                    <select className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition">
+                    <select
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
+                      required
+                    >
                       <option value="">Select</option>
                       <option>Cebu City</option>
                       <option>Manila</option>
@@ -155,6 +208,8 @@ export default function AuthCard({ onClose }) {
                     </label>
                     <input
                       type="text"
+                      value={nationality}
+                      onChange={(e) => setNationality(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
@@ -166,13 +221,14 @@ export default function AuthCard({ onClose }) {
                     </label>
                     <input
                       type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
                   </div>
                 </div>
 
-                {/* Buttons */}
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -193,6 +249,7 @@ export default function AuthCard({ onClose }) {
           </div>
         </div>
       )}
+
       {view == "register" && (
         <div
           className="fixed w-screen h-screen bg-black/50 z-100 flex items-center justify-center"
@@ -215,11 +272,11 @@ export default function AuthCard({ onClose }) {
                 Create your profile
               </h1>
 
-              <h3 className="text-[#01395E] text-lg self-start ">
-                USER INFOMATION
+              <h3 className="text-[#01395E] text-lg self-start">
+                USER INFORMATION
               </h3>
               <p className="self-start text-xs text-gray-400">
-                Kindy fill out your basic profile information
+                Kindly fill out your basic profile information
               </p>
 
               <hr className="w-full text-black my-4" />
@@ -231,7 +288,9 @@ export default function AuthCard({ onClose }) {
                       First Name <span className="text-red-500">*</span>
                     </label>
                     <input
-                      type="fname"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
@@ -242,7 +301,9 @@ export default function AuthCard({ onClose }) {
                       Last Name <span className="text-red-500">*</span>
                     </label>
                     <input
-                      type="lname"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                       required
                     />
@@ -255,6 +316,8 @@ export default function AuthCard({ onClose }) {
                   </label>
                   <input
                     type="email"
+                    value={registerEmail}
+                    onChange={(e) => setRegisterEmail(e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                     required
                   />
@@ -266,6 +329,8 @@ export default function AuthCard({ onClose }) {
                   </label>
                   <input
                     type="password"
+                    value={registerPassword}
+                    onChange={(e) => setRegisterPassword(e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                     required
                   />
@@ -276,14 +341,18 @@ export default function AuthCard({ onClose }) {
                     Confirm Password <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="confirm_pass"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                     required
                   />
                 </div>
+
                 <button
+                  type="button"
                   className="w-full bg-[#1a2e5a] text-white py-2.5 rounded font-semibold text-sm hover:bg-[#243d78] transition"
-                  onClick={handleViewStudentInfo}
+                  onClick={handleViewAcademicInfo}
                 >
                   Next
                 </button>
@@ -302,6 +371,7 @@ export default function AuthCard({ onClose }) {
           </div>
         </div>
       )}
+
       {view == "login" && (
         <div
           className="fixed w-screen h-screen bg-black/50 z-100 flex items-center justify-center"
@@ -321,6 +391,8 @@ export default function AuthCard({ onClose }) {
                   </label>
                   <input
                     type="email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                     required
                   />
@@ -331,6 +403,8 @@ export default function AuthCard({ onClose }) {
                   </label>
                   <input
                     type="password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a2e5a] focus:border-transparent transition"
                     required
                   />
