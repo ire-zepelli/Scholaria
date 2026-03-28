@@ -1,15 +1,14 @@
 import "./App.css";
 import Home from "./pages/Home";
-import Navbar from "./components/Home/Navbar";
 import { Routes, Route } from "react-router-dom";
+import Scholarships from "./pages/Scholarships";
 
 function App() {
   return (
     <>
-      <Navbar />
-
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/scholarships" element={<Scholarships />} />
       </Routes>
     </>
   );
