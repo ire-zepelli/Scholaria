@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import loginImg from "/login-img.png";
 import registerImg from "/register-img.png";
 import { useNavigate } from "react-router-dom";
+import api from "../api.js";
 
 export default function AuthCard({ onClose }) {
   const navigate = useNavigate();
@@ -39,24 +40,47 @@ export default function AuthCard({ onClose }) {
     setView("academicInfo");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("submitted", {
-      firstName,
-      lastName,
-      registerEmail,
-      registerPassword,
-      educationLevel,
-      program,
-      yearLevel,
-      school,
-      gpa,
-      familyIncome,
-      city,
-      nationality,
-      phone,
-    });
-    navigate("/scholarships");
+    try {
+      const response = await api.post("/auth/register", {
+        email: registerEmail,
+        password: registerPassword,
+        firstName,
+        lastName,
+        educationLevel,
+        program,
+        yearLevel,
+        school,
+        gpa,
+        familyIncome,
+        city,
+        nationality,
+        phone,
+      });
+      console.log("Registered!", response.data);
+      handleClose();
+      navigate("/scholarships");
+    } catch (err) {
+      console.error("Registration failed.", err.response?.data?.error);
+      alert(err.response?.data?.error || "Registration failed.");
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("/auth/login", {
+        email: loginEmail,
+        password: loginPassword,
+      });
+      console.log("Logged in!", response.data);
+      handleClose();
+      navigate("/scholarships");
+    } catch (err) {
+      console.error("Login failed.", err.response?.data?.error);
+      alert(err.response?.data?.error || "Login failed.");
+    }
   };
 
   const handleClose = () => {
@@ -384,7 +408,7 @@ export default function AuthCard({ onClose }) {
             <div className="w-1/2 min-h-100 bg-white flex justify-start flex-col items-center p-10">
               <h1 className="text-[#01395E] font-bold text-4xl p-15">LOG IN</h1>
 
-              <form className="space-y-4 w-full">
+              <form className="space-y-4 w-full" onSubmit={handleLogin}>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">
                     Email <span className="text-red-500">*</span>
