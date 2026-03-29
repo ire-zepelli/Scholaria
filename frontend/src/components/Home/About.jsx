@@ -26,7 +26,7 @@ function About() {
       </div>
 
       <div className="flex-1">
-        <img src="/public/about-pic.png" alt="student" className="rounded-xl" />
+        <img src="/about-pic.png" alt="student" className="rounded-xl" />
       </div>
     </section>
   );
