@@ -276,7 +276,7 @@ export default function ScholarshipDetailOverlay({ scholarship, onClose, isSaved
             )}
           </div>
 
-          {/* Availability */}
+          {/* Availability
           <div className="bg-white rounded-[2rem] p-6 shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-gray-50">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Availability</span>
@@ -285,9 +285,9 @@ export default function ScholarshipDetailOverlay({ scholarship, onClose, isSaved
                 <span className="text-[11px] font-black text-[#059669] uppercase tracking-wider">Active Now</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
-          {/* Official Portal */}
+          {/* Official Portal
           <div className="bg-[#1a2e5a] rounded-[2rem] p-7 shadow-xl group cursor-pointer hover:bg-[#253d7a] transition-all hover:-translate-y-1 active:translate-y-0">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[10px] font-black text-blue-300 uppercase tracking-[0.25em]">Official Portal</span>
@@ -308,7 +308,7 @@ export default function ScholarshipDetailOverlay({ scholarship, onClose, isSaved
                 </svg>
               </div>
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
