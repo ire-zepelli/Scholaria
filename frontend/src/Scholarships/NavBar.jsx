@@ -8,11 +8,11 @@ export default function Navbar({ onOpen, onSearch, viewMode }) {
       {/* Logo */}
       <div className="flex items-center gap-2 cursor-pointer">
         <img
-          src="/navbar-logo.png"
+          src="/logo.png"
           alt="logo"
-          className="w-10 h-10 object-contain"
+          className="w-30 h-12 object-contain"
         />
-        <h1 className="font-bold text-lg text-[#1a2e5a]">Scholaria</h1>
+        {/* <h1 className="font-bold text-lg text-[#1a2e5a]">Scholaria</h1> */}
       </div>
 
       {/* Search Bar - Only show when discovering on the map */}
