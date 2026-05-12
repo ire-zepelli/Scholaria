@@ -78,7 +78,12 @@ const DUMMY_SCHOLARSHIPS = [
         "Latest proof of income (for OFW and seafarer dependents)"
       ]
     },
-    applyUrl: "www.ched.gov.ph"
+    applyUrl: "https://governmentph.com/ched-merit/",
+    breakdown: [
+      { label: "GPA Requirement (93%+)", met: true, score: 40 },
+      { label: "Citizenship (Filipino)", met: true, score: 30 },
+      { label: "Income Limit (<400k)", met: true, score: 30 }
+    ]
   },
 
   {
@@ -87,9 +92,38 @@ const DUMMY_SCHOLARSHIPS = [
     type: "school",
     title: "UC Academic Scholarship",
     subtitle: "For honor graduates",
+    description: "A specialized scholarship program for students who graduated with honors (Valedictorian or Salutatorian) in high school, providing significant tuition discounts and recognition.",
     match: 80,
+    imageUrl: "/uc-logo.png",
     requirements: ["Valedictorian/Salutatorian", "Entrance exam"],
-    applyUrl: "www.uc.edu.ph"
+    applyUrl: "www.uc.edu.ph",
+    breakdown: [
+      { label: "Honor Graduate Status", met: true, score: 50 },
+      { label: "Entrance Exam Score", met: false, score: 30 },
+      { label: "Enrollment Status", met: true, score: 20 }
+    ]
+  },
+  {
+    id: 5,
+    schoolId: 1,
+    type: "school",
+    title: "UC Presidential Scholarship",
+    subtitle: "UCLM Campus - SY 2026-2027",
+    description: "A prestigious grant for SHS graduates with 90%+ GPA. Offers full tuition coverage, monthly allowances, and book allowances for students in board programs.",
+    match: 92,
+    imageUrl: "/uc-logo.png",
+    requirements: [
+      "SHS Graduate (S.Y. 2025-2026)",
+      "90-100% GPA (No subject below 90)",
+      "Must enroll in a Board Course",
+      "Photocopy of Report Card"
+    ],
+    applyUrl: "https://www.facebook.com/UCLMScholarshipOffice",
+    breakdown: [
+      { label: "GPA Record (90%+)", met: true, score: 40 },
+      { label: "No Grade Below 90", met: true, score: 30 },
+      { label: "Board Course Enrollment", met: true, score: 22 }
+    ]
   },
   {
     id: 3,
@@ -97,9 +131,15 @@ const DUMMY_SCHOLARSHIPS = [
     type: "school",
     title: "CIT Technologian Grant",
     subtitle: "Engineering focus",
+    description: "A dedicated grant for aspiring engineers at CIT-U, supporting students who demonstrate technical aptitude and maintain high academic standards.",
     match: 95,
+    imageUrl: "/cit-logo.png",
     requirements: ["Engineering major", "90+ GPA"],
-    applyUrl: "www.cit.edu"
+    applyUrl: "www.cit.edu",
+    breakdown: [
+      { label: "Engineering Major", met: true, score: 50 },
+      { label: "GPA Record (90%+)", met: true, score: 45 }
+    ]
   },
   {
     id: 4,
@@ -107,9 +147,16 @@ const DUMMY_SCHOLARSHIPS = [
     type: "government",
     title: "DOST-SEI Scholarship",
     subtitle: "Science and Tech",
+    description: "The premier science scholarship in the Philippines, awarded to students with high aptitude in STEM fields to pursue priority S&T courses.",
     match: 75,
+    imageUrl: "/dost-logo.png",
     requirements: ["STEM background", "DOST exam"],
-    applyUrl: "www.dost.gov.ph"
+    applyUrl: "www.dost.gov.ph",
+    breakdown: [
+      { label: "STEM Background", met: true, score: 40 },
+      { label: "Qualifying Exam", met: false, score: 35 },
+      { label: "Priority Course", met: true, score: 25 }
+    ]
   }
 ];
 
@@ -122,13 +169,28 @@ export default function Scholarships() {
   const [viewMode, setViewMode] = useState("map"); // "map" or "saved"
   const [savedIds, setSavedIds] = useState([1]); // Dummy saved CHED
 
+  const toggleSave = (id) => {
+    setSavedIds(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
   const filteredSchools = DUMMY_SCHOOLS.filter(school => 
     school.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const filteredScholarships = DUMMY_SCHOLARSHIPS.filter(s => {
+    const query = searchQuery.toLowerCase();
+    const titleMatch = s.title.toLowerCase().includes(query);
+    const subtitleMatch = s.subtitle.toLowerCase().includes(query);
+    const descriptionMatch = s.description?.toLowerCase().includes(query);
+    const school = DUMMY_SCHOOLS.find(sch => sch.id === s.schoolId);
+    const schoolNameMatch = school?.name.toLowerCase().includes(query);
+    
+    const searchMatch = titleMatch || subtitleMatch || descriptionMatch || schoolNameMatch;
+
     if (viewMode === "saved") {
-      return savedIds.includes(s.id);
+      return savedIds.includes(s.id) && searchMatch;
     }
     const schoolMatch = selectedSchool ? s.schoolId === selectedSchool.id : true;
     const categoryMatch = categoryFilter === "all" ? true : s.type === categoryFilter;
@@ -141,36 +203,57 @@ export default function Scholarships() {
       
       <div className="flex flex-1 overflow-hidden relative">
         {/* Persistent View Toggle Controls */}
-        <div className="absolute top-6 left-6 z-[2000] flex gap-3">
-          <button 
-            onClick={() => setViewMode("saved")}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl shadow-lg border transition-all hover:-translate-y-0.5 active:translate-y-0 font-bold ${
-              viewMode === "saved" 
-                ? "bg-[#1a2e5a] text-white border-[#1a2e5a]" 
-                : "bg-white text-[#1a2e5a] border-gray-100 hover:bg-gray-50"
-            }`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            Saved
-          </button>
-          <button 
-            onClick={() => {
-              setViewMode("map");
-              setSelectedSchool(null);
-            }}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 font-bold ${
-              viewMode === "map" 
-                ? "bg-[#5d6d7e] text-white" 
-                : "bg-white text-[#5d6d7e] border border-gray-100 hover:bg-gray-50"
-            }`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-            Schools
-          </button>
+        <div className="absolute top-6 left-6 right-6 z-[2000] flex justify-between items-center gap-3">
+          <div className="flex gap-3">
+            <button 
+              onClick={() => {
+                setViewMode("saved");
+                setSearchQuery("");
+              }}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl shadow-lg border transition-all hover:-translate-y-0.5 active:translate-y-0 font-bold ${
+                viewMode === "saved" 
+                  ? "bg-[#1a2e5a] text-white border-[#1a2e5a]" 
+                  : "bg-white text-[#1a2e5a] border-gray-100 hover:bg-gray-50"
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              Saved
+            </button>
+            <button 
+              onClick={() => {
+                setViewMode("map");
+                setSelectedSchool(null);
+                setSearchQuery("");
+              }}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl shadow-lg transition-all hover:-translate-y-0.5 active:translate-y-0 font-bold ${
+                viewMode === "map" 
+                  ? "bg-[#5d6d7e] text-white" 
+                  : "bg-white text-[#5d6d7e] border border-gray-100 hover:bg-gray-50"
+              }`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+              Schools
+            </button>
+          </div>
+
+          {viewMode === "saved" && (
+            <div className="relative w-full max-w-md animate-in fade-in slide-in-from-right-4 duration-300">
+              <input 
+                type="text" 
+                placeholder="Search in saved..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-white border border-gray-100 rounded-2xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-lg transition-all"
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          )}
         </div>
 
         {viewMode === "map" ? (
@@ -249,9 +332,12 @@ export default function Scholarships() {
                       <ScholarshipCard 
                         title={s.title}
                         subtitle={s.subtitle}
-                        matchPercentage={s.match}
-                        hasBookmark={true}
+                        description={s.description}
+                        matchPercentage={s.match || 100}
+                        isSaved={savedIds.includes(s.id)}
+                        onToggleSave={() => toggleSave(s.id)}
                         imageUrl={s.imageUrl}
+                        applyUrl={s.applyUrl}
                       />
                     </div>
                   ))}
@@ -275,6 +361,9 @@ export default function Scholarships() {
               <ScholarshipDetailOverlay 
                 scholarship={selectedScholarship} 
                 onClose={() => setSelectedScholarship(null)} 
+                isSaved={selectedScholarship && savedIds.includes(selectedScholarship.id)}
+                onToggleSave={() => selectedScholarship && toggleSave(selectedScholarship.id)}
+                variant="overlay"
               />
 
               <MapContainer
@@ -338,29 +427,15 @@ export default function Scholarships() {
                   </p>
                 </div>
 
-                <div className="flex flex-wrap gap-4">
-                  <div className="bg-white border border-gray-100 px-6 py-3 rounded-[2rem] shadow-sm">
-                    <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Total Saved</span>
-                    <span className="text-2xl font-black text-[#1a2e5a]">{savedIds.length}</span>
+                <div className="flex flex-wrap gap-8">
+                  <div className="bg-white border border-gray-100 px-12 py-10 rounded-[3rem] shadow-md flex flex-col justify-center min-w-[240px]">
+                    <span className="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Total Saved</span>
+                    <span className="text-6xl font-black text-[#1a2e5a] leading-none">{savedIds.length}</span>
                   </div>
-                  <div className="bg-white border border-gray-100 px-6 py-3 rounded-[2rem] shadow-sm">
-                    <span className="block text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Best Match</span>
-                    <span className="text-2xl font-black text-green-600">100%</span>
+                  <div className="bg-white border border-gray-100 px-12 py-10 rounded-[3rem] shadow-md flex flex-col justify-center min-w-[240px]">
+                    <span className="block text-sm font-bold text-gray-400 uppercase tracking-widest mb-2">Best Match</span>
+                    <span className="text-6xl font-black text-green-600 leading-none">100%</span>
                   </div>
-                </div>
-              </div>
-
-              {/* Search and Filters for Saved */}
-              <div className="flex items-center gap-4 mb-8">
-                <div className="relative flex-1 max-w-md">
-                  <input 
-                    type="text" 
-                    placeholder="Search in saved..." 
-                    className="w-full bg-white border border-gray-100 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm transition-all"
-                  />
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
                 </div>
               </div>
 
@@ -375,9 +450,12 @@ export default function Scholarships() {
                     <ScholarshipCard 
                       title={s.title}
                       subtitle={s.subtitle}
-                      matchPercentage={s.match}
-                      hasBookmark={true}
+                      description={s.description}
+                      matchPercentage={s.match || 100}
+                      isSaved={savedIds.includes(s.id)}
+                      onToggleSave={() => toggleSave(s.id)}
                       imageUrl={s.imageUrl}
+                      applyUrl={s.applyUrl}
                     />
                   </div>
                 ))}
@@ -408,6 +486,9 @@ export default function Scholarships() {
             <ScholarshipDetailOverlay 
               scholarship={selectedScholarship} 
               onClose={() => setSelectedScholarship(null)} 
+              isSaved={selectedScholarship && savedIds.includes(selectedScholarship.id)}
+              onToggleSave={() => selectedScholarship && toggleSave(selectedScholarship.id)}
+              variant="modal"
             />
           </div>
         )}
